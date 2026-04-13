@@ -91,17 +91,6 @@
         .btn-preview { background:#6a1b9a; color:#fff; font-size:.95rem; margin-top:16px; border:2px solid #ab47bc; }
         .btn-preview:hover { background:#7b1fa2; }
 
-        /* SLIDER OPACIDAD OVERLAY */
-        .overlay-ctrl { background:#111; border:1px solid #333; border-radius:8px; padding:12px 14px; margin-top:10px; }
-        .overlay-ctrl label { font-size:11px; color:#aaa; display:block; margin-bottom:6px; }
-        .overlay-row { display:flex; align-items:center; gap:10px; }
-        .overlay-row input[type=range] { flex:1; accent-color:var(--neon); height:6px; cursor:pointer; background:none; border:none; margin:0; padding:0; }
-        .overlay-val { font-size:13px; font-weight:bold; color:var(--neon); min-width:38px; text-align:right; }
-        .overlay-switch { display:flex; border-radius:20px; overflow:hidden; border:1.5px solid #444; flex-shrink:0; }
-        .overlay-sw-opt { padding:5px 12px; font-size:10px; font-weight:bold; cursor:pointer; border:none; background:#222; color:#555; margin:0; width:auto; border-radius:0; text-transform:uppercase; transition:background .2s,color .2s; }
-        .overlay-sw-opt.sw-on  { background:#00cc44; color:#000; }
-        .overlay-sw-opt.sw-off { background:#cc3333; color:#fff; }
-
         /* MODAL QR */
         .qr-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:9999; align-items:center; justify-content:center; }
         .qr-overlay.visible { display:flex; }
@@ -160,6 +149,8 @@
             <div class="st"><span class="st-txt">IDENTIDAD PROFESIONAL</span></div>
             <input type="text"  id="nombre"    placeholder="Nombre de Marca/Empresa">
             <input type="text"  id="profesion" placeholder="Cargo (Ej: Vendedor Digital)">
+            <input type="text"  id="site_title" placeholder="TÍTULO DE SITIO — Para SEO/Google (Ej: María López | Coach de Vida · Buenos Aires)" style="border-color:#fbc02d;">
+            <p style="font-size:10px;color:#888;margin:2px 0 0 0;">▲ Aparece en la pestaña del navegador y en los resultados de Google. Si lo dejás vacío usa el Nombre de Marca.</p>
 
             <div class="st" style="margin-top:12px;"><span class="st-txt">BIO / MI HISTORIA</span></div>
             <p style="font-size:10px;color:#666;margin:4px 0 0 0;">Aparece debajo del nombre en la tarjeta. Sin límite de texto.</p>
@@ -184,19 +175,6 @@
                 <input type="color" id="mainColor" value="#00ff41" style="height:50px;">
             </div>
 
-            <!-- OVERLAY CONTROL -->
-            <div class="overlay-ctrl">
-                <label>🪟 OVERLAY TARJETA — Opacidad del fondo sobre imagen</label>
-                <div class="overlay-row">
-                    <div class="overlay-switch">
-                        <button class="overlay-sw-opt sw-on"  id="swOverlayOn"  onclick="setOverlay(true)">ON</button>
-                        <button class="overlay-sw-opt"        id="swOverlayOff" onclick="setOverlay(false)">OFF</button>
-                    </div>
-                    <input type="range" id="overlayOpacity" min="0" max="100" value="72"
-                           oninput="actualizarValorOverlay(this.value)" onchange="guardarDatos()">
-                    <span class="overlay-val" id="overlayValTxt">72%</span>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -296,24 +274,6 @@ function esc(str){if(!str)return '';return String(str).replace(/&/g,'&amp;').rep
 function getYTId(url){if(!url)return null;var m=url.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]{11})/);return m?m[1]:null;}
 function v(id){return(document.getElementById(id)||{}).value||'';}
 function vt(id){return v(id).trim();}
-
-// ════════════════════════════════════════════════
-// OVERLAY — OPACIDAD Y ON/OFF
-// ════════════════════════════════════════════════
-var overlayOpacityVal = 72;
-var overlayEnabled    = true;
-
-function actualizarValorOverlay(val){
-    overlayOpacityVal = parseInt(val);
-    document.getElementById('overlayValTxt').textContent = val+'%';
-}
-
-function setOverlay(onOff){
-    overlayEnabled = onOff;
-    document.getElementById('swOverlayOn').className  = 'overlay-sw-opt'+(onOff?' sw-on':'');
-    document.getElementById('swOverlayOff').className = 'overlay-sw-opt'+(!onOff?' sw-off':'');
-    guardarDatos();
-}
 
 // ════════════════════════════════════════════════
 // ACORDEÓN DEL PANEL — HEAD / BODY / FOOT
@@ -423,10 +383,9 @@ function actualizarBtnAcordeonVentas(){
 // ════════════════════════════════════════════════
 var LS_KEY='core_v199_data';
 var CAMPOS_FIJOS=[
-    'nombre','profesion',
+    'nombre','profesion','site_title',
     'bio_txt','bio_italic','bio_bold','bio_upper',
     'banner','perfil','site_url','url_fondo','yt_gancho','mainColor',
-    'overlayOpacity',
     'seo_keywords','google_verify',
     'html_head','html_head_2',
     'html_body_open','html_body_open_2',
@@ -446,7 +405,7 @@ function mostrarIndicador(){
 }
 
 function guardarDatos(){
-    var data={tema:temaActual, acordeonVentas:acordeonVentas, overlayEnabled:overlayEnabled};
+    var data={tema:temaActual, acordeonVentas:acordeonVentas};
     CAMPOS_FIJOS.forEach(function(id){var el=document.getElementById(id);if(el)data[id]=el.value;});
     var modulos=[];
     document.querySelectorAll('.sec-box').forEach(function(item){
@@ -476,10 +435,6 @@ function cargarDatos(){
         actualizarBtnAcordeonVentas();
     }
     CAMPOS_FIJOS.forEach(function(id){var el=document.getElementById(id);if(el&&data[id]!==undefined)el.value=data[id];});
-    // Restaurar overlay
-    if(data.overlayEnabled!==undefined) setOverlay(data.overlayEnabled);
-    var opEl=document.getElementById('overlayOpacity');
-    if(opEl){ overlayOpacityVal=parseInt(opEl.value)||72; document.getElementById('overlayValTxt').textContent=opEl.value+'%'; }
     actualizarTodosBioFmt();
     if(Array.isArray(data.modulos))data.modulos.forEach(function(m){addModulo(m);});
 }
@@ -491,10 +446,6 @@ function limpiarTodo(){
     setTema('claro');
     acordeonVentas=false;
     actualizarBtnAcordeonVentas();
-    setOverlay(true);
-    overlayOpacityVal=72;
-    var opEl=document.getElementById('overlayOpacity'); if(opEl)opEl.value='72';
-    document.getElementById('overlayValTxt').textContent='72%';
     actualizarTodosBioFmt();
     document.getElementById('modulosContainer').innerHTML='';
     document.getElementById('resultArea').style.display='none';
@@ -608,22 +559,22 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
     var pieCl  = tema==='oscuro' ? '#555'    : '#aaa';
     var bodyBg = tema==='oscuro' ? '#111'    : '#f4f7f6';
     var bodyTx = tema==='oscuro' ? '#e0e0e0' : '#333';
-    var opVal  = typeof overlayOpacityVal!=='undefined' ? overlayOpacityVal : 72;
-    var opOff  = typeof overlayEnabled!=='undefined' ? !overlayEnabled : false;
-    var opFrac = opOff ? 0 : (opVal/100);
-    var cardBg = tema==='oscuro'
-        ? 'rgba(18,18,18,'+opFrac+')'
-        : 'rgba(255,255,255,'+opFrac+')';
+    // Card siempre transparente — la imagen de fondo se ve completa
+    var cardBg = 'transparent';
     var perfilBg= tema==='oscuro'? '#1e1e1e' : '#fff';
     var cardSh = tema==='oscuro' ? '0 0 30px rgba(0,0,0,.7)' : '0 0 20px rgba(0,0,0,.1)';
-    var bodyFondo = urlFondo
-        ? 'background-image:url("'+esc(urlFondo)+'");background-size:cover;background-position:center;background-attachment:fixed;'
+    // Fondo de pantalla: url_fondo tiene prioridad, luego el banner como fallback
+    var bgImgUrl  = urlFondo || (bannerUrl ? bannerUrl : '');
+    var bodyFondo = bgImgUrl
+        ? 'background-image:url("'+esc(bgImgUrl)+'");background-size:cover;background-position:center;background-attachment:fixed;'
         : '';
+    // Bio siempre con vidrio esmerilado (card es transparente)
+    var bioOverlayBg = tema==='oscuro' ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.60)';
 
     return (
         '    *{box-sizing:border-box;}\n'+
         '    body{background:'+bodyBg+';'+bodyFondo+'margin:0;font-family:sans-serif;text-align:center;color:'+bodyTx+';min-height:100vh;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;}\n'+
-        '    .card{background:'+cardBg+';max-width:480px;margin:auto;min-height:100vh;box-shadow:'+cardSh+';backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}\n'+
+        '    .card{background:'+cardBg+';max-width:480px;margin:auto;min-height:100vh;}\n'+
         '    .banner{height:170px;background:url("'+esc(bannerUrl)+'") center/cover #222;}\n'+
         '    .v-cont{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;background:#000;}\n'+
         '    .v-cont iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}\n'+
@@ -644,7 +595,8 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '    .mod-body{max-height:0;overflow:hidden;transition:max-height .35s ease;background:'+modBg+';border:1px solid '+modBdr+';border-top:none;border-radius:0 0 12px 12px;}\n'+
         '    .mod-body-inner{padding:16px;text-align:left;}\n'+
         /* Bio */
-        '    .bio-blk{padding:16px 20px 8px;font-size:15px;line-height:1.75;text-align:left;color:'+bodyTx+';white-space:pre-wrap;word-break:break-word;}\n'+
+        '    .bio-blk{padding:16px 20px 14px;font-size:15px;line-height:1.85;text-align:left;color:'+bodyTx+';word-break:break-word;border-radius:10px;margin:8px 12px;background:'+bioOverlayBg+';backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}\n'+
+        '    .bio-blk p{margin:0 0 10px 0;}\n'+
         /* Módulo Plano (flyer) */
         '    .mod-flat{margin:10px 15px;text-align:left;padding:0 0 10px 0;}\n'+
         '    .mod-flat-title{font-weight:bold;font-size:15px;color:'+color+';margin:0 0 10px 0;padding:10px 0 4px 0;border-bottom:1px solid '+color+';}\n'+
@@ -916,6 +868,7 @@ function minifyHTML(html){
 function construirHTML(){
     var color        = v('mainColor')||'#00ff41';
     var nombre       = vt('nombre') ||'Ecosistema Digital';
+    var siteTitle    = vt('site_title') || nombre;
     var prof         = vt('profesion');
     var bioTxt       = v('bio_txt').trim();
     var bioItalic    = v('bio_italic')==='1';
@@ -956,9 +909,18 @@ function construirHTML(){
     var bioEstilo = '';
     if(bioItalic) bioEstilo += 'font-style:italic;';
     if(bioBold)   bioEstilo += 'font-weight:bold;';
-    if(bioUpper)  bioEstilo += 'text-transform:uppercase;';
-    var bioBlk = bioTxt
-        ? '<div class="bio-blk"'+(bioEstilo?' style="'+bioEstilo+'"':'')+'>'+esc(bioTxt)+'</div>'
+    if(bioUpper)  bioEstilo += 'text-transform:uppercase;letter-spacing:.5px;';
+    // Convertir saltos de línea a <br> para sobrevivir al minificador
+    // Párrafos separados (doble \n) → <br><br>, saltos simples → <br>
+    var bioHtml = bioTxt
+        ? bioTxt
+            .replace(/\r\n/g,'\n')
+            .replace(/\n\n+/g,'__PARR__')
+            .split('\n').map(function(l){return esc(l);}).join('<br>')
+            .replace(/__PARR__/g,'<br><br>')
+        : '';
+    var bioBlk = bioHtml
+        ? '<div class="bio-blk"'+(bioEstilo?' style="'+bioEstilo+'"':'')+'>'+bioHtml+'</div>'
         : '';
 
     // ── Bloques simples ──
@@ -1028,7 +990,8 @@ function construirHTML(){
 
     // ── OG ──
     var siteUrl  = vt('site_url');
-    var ogTitle  = esc(nombre);
+    var ogTitle  = esc(siteTitle);  // usa TITULO DE SITIO si existe, si no el nombre
+    var brandName= esc(nombre);     // nombre de marca (para h1 y nav)
     var ogDesc   = prof ? esc(prof) : (bioTxt ? esc(bioTxt.substring(0,160)) : ogTitle);
     var ogImage  = perfil ? esc(perfil) : (banner ? esc(banner) : '');
     var ogMeta   =
@@ -1067,7 +1030,7 @@ function construirHTML(){
     if(emailForm)              navLinks+='<a href="#s-contacto"  onclick="closeDskMenu()">&#128236; Contacto</a>';
     var navHtml=
         '<nav class="dsk-nav">'+
-        '<span class="dsk-brand">'+ogTitle+'</span>'+
+        '<span class="dsk-brand">'+brandName+'</span>'+
         '<button class="dsk-ham" onclick="toggleDskMenu()" aria-label="Men\u00FA">&#9776;</button>'+
         '<div class="dsk-menu" id="dskMenu">'+navLinks+'</div>'+
         '</nav>\n';
@@ -1094,7 +1057,7 @@ function construirHTML(){
         '<div class="dsk-hero">\n'+
         '<div class="dsk-hero-l">'+perfilBlk+'</div>\n'+
         '<div class="dsk-hero-r">\n'+
-        '<h1 style="margin:10px 0 5px 0;">'+ogTitle+'</h1>\n'+
+        '<h1 style="margin:10px 0 5px 0;">'+brandName+'</h1>\n'+
         (profBlk?profBlk+'\n':'')+
         (bioBlk?'<div id="s-bio">'+bioBlk+'</div>\n':'')+
         (redesHtml?'<div id="s-redes">'+redesHtml+'</div>\n':'')+
@@ -1148,7 +1111,7 @@ function construirHTML(){
 // ════════════════════════════════════════════════
 // ── Genera objeto JSON de respaldo con todos los campos ──
 function buildAJSON(){
-    var data={tema:temaActual, acordeonVentas:acordeonVentas, overlayEnabled:overlayEnabled};
+    var data={tema:temaActual, acordeonVentas:acordeonVentas};
     CAMPOS_FIJOS.forEach(function(id){
         var el=document.getElementById(id);
         if(el) data[id]=el.value;
@@ -1189,9 +1152,6 @@ function cargarAJSON(input){
             if(el&&data[id]!==undefined) el.value=data[id];
         });
         document.getElementById('modulosContainer').innerHTML='';
-        if(data.overlayEnabled!==undefined) setOverlay(data.overlayEnabled);
-        var opEl=document.getElementById('overlayOpacity');
-        if(opEl){ overlayOpacityVal=parseInt(opEl.value)||72; document.getElementById('overlayValTxt').textContent=opEl.value+'%'; }
         if(Array.isArray(data.modulos)) data.modulos.forEach(function(m){addModulo(m);});
         guardarDatos();
         alert('\u2705 A-JSON cargado. Todos los campos restaurados.');
