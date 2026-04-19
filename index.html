@@ -575,8 +575,8 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '    *{box-sizing:border-box;}\n'+
         '    body{background:'+bodyBg+';'+bodyFondo+'margin:0;font-family:sans-serif;text-align:center;color:'+bodyTx+';min-height:100vh;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;}\n'+
         '    .card{background:'+cardBg+';max-width:480px;margin:auto;min-height:100vh;}\n'+
-        '    .card,.card *,.dsk-nav,.dsk-nav *{text-shadow:0 2px 5px rgba(0,0,0,.72),0 0 14px rgba(0,0,0,.36);}\n'+
-        '    img,iframe,video,svg,input,textarea{ text-shadow:none!important;}\n'+
+        '    html,body,body *,body *::before,body *::after,.card,.card *,.dsk-nav,.dsk-nav *{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}\n'+
+        '    img,iframe,video,svg,canvas{ text-shadow:none!important;}\n'+
         '    .btn,.btn-extra,.btn-consultar,.btn-share,.mod-trigger,.label,button{ text-shadow:0 2px 4px rgba(0,0,0,.78),0 0 10px rgba(0,0,0,.42)!important;}\n'+
         '    .banner{height:170px;background:url("'+esc(bannerUrl)+'") center/cover #222;}\n'+
         '    .v-cont{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;background:#000;}\n'+
@@ -647,6 +647,7 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '    .dsk-sec-title{display:none;font-size:1.1rem;font-weight:800;color:'+color+';border-bottom:3px solid '+color+';padding:6px 0 8px;margin:0 0 22px;text-transform:uppercase;letter-spacing:.6px;}\n'+
         /* ── DESKTOP FULL LAYOUT ── */
         '    @media(min-width:769px){\n'+
+        '      html,body,body *,body *::before,body *::after,.card,.card *,.dsk-nav,.dsk-nav *{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}\n'+
         '      .dsk-nav{display:flex;}\n'+
         '      .card{max-width:none;min-height:auto;box-shadow:none;background:transparent;border-radius:0;}\n'+
         '      .banner{display:none;}\n'+
@@ -666,7 +667,10 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '      .mod-acc{margin:10px 0;}\n'+
         '      .mod-flat{margin:10px 0;}\n'+
         '      form{max-width:580px;}\n'+
-        '    }\n'
+        '    }\n'+
+        '    @media(max-width:768px){html,body,body *,body *::before,body *::after,.card,.card *{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}}\n'+
+        '    html,body,body *,body *::before,body *::after{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}\n'+
+        '    input::placeholder,textarea::placeholder{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}\n'
     );
 }
 
@@ -849,6 +853,33 @@ var CARD_JS =
 '  var m=document.getElementById("qrModal");\n'+
 '  if(m)m.classList.remove("visible");\n'+
 '}\n'+
+'function aplicarTextShadowFinal(){\n'+
+'  var sombra="0 2px 5px rgba(0,0,0,.96), 0 0 16px rgba(0,0,0,.72)";\n'+
+'  function aplicar(el){\n'+
+'    if(!el||!el.style)return;\n'+
+'    var tag=(el.tagName||"").toUpperCase();\n'+
+'    if(tag==="IMG"||tag==="IFRAME"||tag==="VIDEO"||tag==="SVG"||tag==="PATH"||tag==="CANVAS")return;\n'+
+'    el.style.setProperty("text-shadow",sombra,"important");\n'+
+'  }\n'+
+'  aplicar(document.documentElement);aplicar(document.body);\n'+
+'  document.querySelectorAll("body, body *").forEach(aplicar);\n'+
+'  if(document.createTreeWalker&&document.body){\n'+
+'    var walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);\n'+
+'    var node;\n'+
+'    while(node=walker.nextNode()){\n'+
+'      if(node.nodeValue&&node.nodeValue.replace(/\\s+/g,"").length&&node.parentElement)aplicar(node.parentElement);\n'+
+'    }\n'+
+'  }\n'+
+'}\n'+
+'function vigilarTextShadowFinal(){\n'+
+'  aplicarTextShadowFinal();\n'+
+'  if(!window.MutationObserver||!document.body)return;\n'+
+'  var obs=new MutationObserver(function(){aplicarTextShadowFinal();});\n'+
+'  obs.observe(document.body,{childList:true,subtree:true,characterData:true});\n'+
+'  setTimeout(function(){obs.disconnect();},8000);\n'+
+'}\n'+
+'document.addEventListener("DOMContentLoaded",function(){vigilarTextShadowFinal();setTimeout(aplicarTextShadowFinal,80);setTimeout(aplicarTextShadowFinal,400);setTimeout(aplicarTextShadowFinal,1200);});\n'+
+'if(document.readyState!=="loading")vigilarTextShadowFinal();\n'+
 '<\/script>';
 
 // ════════════════════════════════════════════════
@@ -1026,6 +1057,7 @@ function construirHTML(){
         (ogImage  ? '  <meta name="twitter:image" content="'+ogImage+'">\n' : '');
 
     var cssBloque = getCSSbyTema(temaActual,color,banner,urlFondo);
+    var finalTextShadowCSS='<style id="final-text-shadow">html,body,body *,body *::before,body *::after,.card,.card *,.dsk-nav,.dsk-nav *{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}img,iframe,video,svg,canvas{ text-shadow:none!important;}input::placeholder,textarea::placeholder{ text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}@media(max-width:768px){html,body,body *,body *::before,body *::after,.card,.card *{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}}@media(min-width:769px){html,body,body *,body *::before,body *::after,.card,.card *,.dsk-nav,.dsk-nav *{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}}</style>\n';
 
     // ── Nav links (desktop) ──
     var navLinks='<a href="#s-inicio" onclick="closeDskMenu()">&#127968; Inicio</a>';
@@ -1052,6 +1084,7 @@ function construirHTML(){
         (faLink?'  '+faLink+'\n':'')+
         '  <style>\n'+cssBloque+'  </style>\n'+
         (htmlHead?'%%INJECT_HEAD%%':'')+
+        finalTextShadowCSS+
         '</head>\n'+
         '<body>\n'+
         (htmlBodyOpen?'%%INJECT_BODYOPEN%%':'')+
