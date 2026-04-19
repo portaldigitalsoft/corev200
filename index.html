@@ -20,15 +20,6 @@
         .btn-add    { background:#333; color:#ff9900; border:1px dashed #ff9900; }
         .btn-clear  { background:#1a1a1a; color:#ff4444; border:1px solid #ff4444; margin-top:8px; font-size:.85rem; padding:10px; }
 
-        input, textarea, .st-txt, .pnl-sec-hdr-txt, .sec-box-label, .st {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.85), 
-                 -1px -1px 1px rgba(0, 0, 0, 0.5) !important;
-}
-
-input:focus, textarea:focus {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9) !important;
-}
-        
         /* TEMA SWITCH */
         .tema-wrapper { display:flex; align-items:center; justify-content:center; gap:10px; margin:12px 0 4px 0; }
         .tema-label   { font-size:11px; color:#888; }
@@ -270,7 +261,7 @@ input:focus, textarea:focus {
 
     <!-- BOTONES DE ACCIÓN -->
     <button onclick="previsualizarTarjeta()" class="btn-preview">👁 PREVISUALIZAR TARJETA</button>
-    <button onclick="accionPrincipal()" class="btn-forjar">⚡ GENERAR + A-JSON Y EXPORTAR ZIP PARA NETLIFY</button>
+    <button onclick="accionPrincipal()" class="btn-forjar">⚡ GENERAR Y EXPORTAR ZIP PARA GITHUB</button>
     <button onclick="limpiarTodo()"      class="btn-clear">🗑 LIMPIAR TODOS LOS CAMPOS</button>
 </div>
 
@@ -584,6 +575,9 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '    *{box-sizing:border-box;}\n'+
         '    body{background:'+bodyBg+';'+bodyFondo+'margin:0;font-family:sans-serif;text-align:center;color:'+bodyTx+';min-height:100vh;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;}\n'+
         '    .card{background:'+cardBg+';max-width:480px;margin:auto;min-height:100vh;}\n'+
+        '    .card,.card *,.dsk-nav,.dsk-nav *{text-shadow:0 2px 5px rgba(0,0,0,.72),0 0 14px rgba(0,0,0,.36);}\n'+
+        '    img,iframe,video,svg,input,textarea{ text-shadow:none!important;}\n'+
+        '    .btn,.btn-extra,.btn-consultar,.btn-share,.mod-trigger,.label,button{ text-shadow:0 2px 4px rgba(0,0,0,.78),0 0 10px rgba(0,0,0,.42)!important;}\n'+
         '    .banner{height:170px;background:url("'+esc(bannerUrl)+'") center/cover #222;}\n'+
         '    .v-cont{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;background:#000;}\n'+
         '    .v-cont iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}\n'+
@@ -605,7 +599,7 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '    .mod-body-inner{padding:16px;text-align:left;}\n'+
         /* Bio */
         '    .bio-blk{padding:16px 20px 14px;font-size:15px;line-height:1.85;text-align:left;color:'+bodyTx+';word-break:break-word;border-radius:10px;margin:8px 12px;background:'+bioOverlayBg+';backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}\n'+
-        '    .bio-blk p{margin:0 0 10px 0; font-size:1.3rem; color:#FFFFFF !important; font-weight:800; text-shadow: 2px 2px 4px #000; text-align:center;}\n'+
+        '    .bio-blk p{margin:0 0 10px 0; font-size:1.3rem; color:#FFFFFF !important; font-weight:800; text-shadow:0 2px 5px rgba(0,0,0,.86),0 0 16px rgba(0,0,0,.58); text-align:center;}\n'+
     
         /* Módulo Plano (flyer) */
         '    .mod-flat{margin:10px 15px;text-align:left;padding:0 0 10px 0;}\n'+
@@ -662,7 +656,7 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '      .dsk-hero-r{flex:1;text-align:left;}\n'+
         '      .perfil{margin-top:0!important;width:175px;height:175px;}\n'+
         '      .dsk-hero-r h1{font-size:2.1rem;text-align:left;margin:0 0 6px;}\n'+
-        '      .dsk-hero-r p{text-align:left;margin:0 0 10px;font-size:1.6rem;color:#FFFFFF !important;font-weight:900;text-shadow: 2px 2px 4px #000;}\n'+
+        '      .dsk-hero-r p{text-align:left;margin:0 0 10px;font-size:1.6rem;color:#FFFFFF !important;font-weight:900;text-shadow:0 2px 5px rgba(0,0,0,.88),0 0 16px rgba(0,0,0,.60);}\n'+
                    
         '      .bio-blk{padding:0 0 14px;}\n'+
         '      .redes{justify-content:flex-start;padding:14px 0;}\n'+
@@ -1172,7 +1166,7 @@ function cargarAJSON(input){
     input.value='';
 }
 
-// ── Acción principal: genera HTML + A-JSON y empaqueta ZIP ──
+// ── Acción principal: genera HTML y empaqueta ZIP ──
 function accionPrincipal(){
     var r=construirHTML();
     if(!r||!r.html){alert('Error al generar el HTML.');return;}
@@ -1180,7 +1174,7 @@ function accionPrincipal(){
     document.getElementById('resultArea').style.display='block';
     var statusEl=document.getElementById('zipStatus');
     statusEl.className='zip-status ok';
-    statusEl.textContent='Empaquetando ZIP + A-JSON...';
+    statusEl.textContent='Empaquetando ZIP con index.html...';
     window.scrollTo(0,0);
 
     if(typeof JSZip==='undefined'){
@@ -1190,14 +1184,8 @@ function accionPrincipal(){
     }
     var nombre    = vt('nombre')||'Ecosistema';
     var slug      = slugify(nombre);
-    var jsonNombre= nombre.replace(/\s+/g,'_')+'_A-JSON';
-    var jsonStr   = buildAJSON();
-    var redirects ='/*\t/index.html\t200\n/404\t/index.html\t200\n';
-
     var zip=new JSZip();
     zip.file('index.html',r.html);
-    zip.file('_redirects',redirects);
-    zip.file(jsonNombre+'.json',jsonStr);
     zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:9}})
         .then(function(blob){
             var url=URL.createObjectURL(blob);
@@ -1206,7 +1194,7 @@ function accionPrincipal(){
             document.body.appendChild(a);a.click();document.body.removeChild(a);
             setTimeout(function(){URL.revokeObjectURL(url);},3000);
             statusEl.className='zip-status ok';
-            statusEl.textContent='\u2705 ZIP NETLIFY LISTO: '+slug+'.zip  |  index.html + _redirects + '+jsonNombre+'.json';
+            statusEl.textContent='\u2705 ZIP GITHUB LISTO: '+slug+'.zip  |  contiene un único archivo index.html';
         })
         .catch(function(err){
             statusEl.className='zip-status err';
