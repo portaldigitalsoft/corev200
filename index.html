@@ -1228,7 +1228,9 @@ function accionPrincipal(){
     var slug      = slugify(nombre);
     var zip=new JSZip();
     zip.file('index.html',r.html);
+    zip.file('data.json', buildAJSON());
     zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:9}})
+        
         .then(function(blob){
             var url=URL.createObjectURL(blob);
             var a=document.createElement('a');
