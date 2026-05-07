@@ -849,12 +849,12 @@ var CARD_JS =
 /* ── QR / Share API ── */
 'function compartirTarjeta(siteUrl,nombre){\n'+
 '  if(navigator.share){\n'+
-'    navigator.share({title:nombre,url:siteUrl}).catch(function(){});\n'+
+'    navigator.share({title:nombre,url:window.location.href}).catch(function(){});\n'+
 '  } else {\n'+
 '    var modal=document.getElementById("qrModal");\n'+
 '    if(!modal)return;\n'+
 '    document.getElementById("qrImg").src=\n'+
-'      "https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=000000&bgcolor=ffffff&data="+encodeURIComponent(siteUrl);\n'+
+'      "https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=000000&bgcolor=ffffff&data="+encodeURIComponent(window.location.href);\n'+
 '    modal.classList.add("visible");\n'+
 '  }\n'+
 '}\n'+
@@ -890,7 +890,6 @@ var CARD_JS =
 'document.addEventListener("DOMContentLoaded",function(){vigilarTextShadowFinal();setTimeout(aplicarTextShadowFinal,80);setTimeout(aplicarTextShadowFinal,400);setTimeout(aplicarTextShadowFinal,1200);});\n'+
 'if(document.readyState!=="loading")vigilarTextShadowFinal();\n'+
 '<\/script>';
-
 // ════════════════════════════════════════════════
 // MINIFICADOR HTML (preserva bloques script/style)
 // ════════════════════════════════════════════════
