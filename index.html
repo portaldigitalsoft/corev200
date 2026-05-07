@@ -999,16 +999,15 @@ function construirHTML(){
         mapaBlk = '<div class="label">\uD83D\uDCCD UBICACI\u00D3N</div><div class="map-cont"><iframe src="'+esc(mapaEmbed)+'" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>';
     }
 
-    // ── QR / Share button ──
-    var shareBlk = siteUrl
-        ?'<button class="btn-share" onclick="compartirTarjeta(\''+esc(siteUrl)+'\',\''+esc(nombre)+'\')">\uD83D\uDCF2 Compartir / QR</button>'+
-          '<div class="qr-modal" id="qrModal"><div class="qr-inner">'+
-          '<button class="qr-cerrar" onclick="cerrarQr()">&#x2715;</button>'+
-          '<h3>&#128247; C\u00F3digo QR</h3>'+
-          '<img id="qrImg" src="" alt="QR">'+
-          '<p>Escane\u00E1 con la c\u00E1mara para abrir la tarjeta</p>'+
-          '</div></div>'
-        :'';
+    // — QR / Share button —
+var shareBlk =
+'<button class="btn-share" onclick="compartirTarjeta(window.location.href,\''+esc(nombre)+'\')">\uD83D\uDD01 Compartir / QR</button>'+
+'<div class="qr-modal" id="qrModal"><div class="qr-inner">'+
+'<button class="qr-cerrar" onclick="cerrarQr()">&times;</button>'+
+'<h3>&#128247; C\u00f3digo QR</h3>'+
+'<img id="qrImg" src="" alt="QR">'+
+'<p>Escanea con la c\u00e1mara para abrir la tarjeta</p>'+
+'</div></div>';
 
     // ── ACCIONES Y VENTAS: acordeón ON=cerrado / OFF=plano ──
     var ventasContenido = ctaBlk + mpBlk + pdfBlk;
