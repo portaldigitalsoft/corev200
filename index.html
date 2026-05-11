@@ -109,37 +109,6 @@
         .qr-box p  { color:#aaa; font-size:11px; margin:0 0 14px; }
         .qr-close { position:absolute; top:10px; right:14px; background:none; border:none; color:#ff4444; font-size:20px; cursor:pointer; padding:4px; width:auto; margin:0; }
     </style>
-    <style>
-    /* --- CORE V200: OPTIMIZACIÓN SUPREMA --- */
-    
-    /* 1. NITIDEZ Y RENDERIZADO */
-    * {
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-        transform: translateZ(0); /* Aceleración por GPU */
-    }
-
-    /* 2. LEGIBILIDAD SIN OVERLAYS (Tu pedido especial) */
-    .texto-vip {
-        -webkit-text-stroke: 0.3px rgba(0,0,0,0.2);
-        font-weight: 600;
-        letter-spacing: -0.02em; /* Estética moderna compacta */
-    }
-
-    /* 3. EXPERIENCIA DE APP (Sin reflejos azules al tocar) */
-    body {
-        -webkit-tap-highlight-color: transparent;
-        user-select: none;
-        background-color: #f8f9fa; /* Evita el "flash" blanco al cargar */
-    }
-
-    /* 4. ACORDEONES CRISTALINOS */
-    .acordeon-contenido {
-        backface-visibility: hidden;
-        perspective: 1000;
-        will-change: height, opacity;
-    }
-    </style>
 </head>
 <body>
 
@@ -615,15 +584,7 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '    *{box-sizing:border-box;}\n'+
         '    body{background:'+bodyBg+';'+bodyFondo+'margin:0;font-family:sans-serif;text-align:center;color:'+bodyTx+';min-height:100vh;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;}\n'+
         '    .card{background:'+cardBg+';max-width:480px;margin:auto;min-height:100vh;}\n'+
-        '    html,body,body *,body *::before,body *::after,.card,.card *,.dsk-nav,.dsk-nav *{.card-text:last-child {
-    margin-bottom: 0;
-    text-shadow: none !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    padding: 12px;
-    border-radius: 8px;
-    color: #ffffff !important;}\n'+
+        '    html,body,body *,body *::before,body *::after,.card,.card *,.dsk-nav,.dsk-nav *{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}\n'+
         '    img,iframe,video,svg,canvas{ text-shadow:none!important;}\n'+
         '    .btn,.btn-extra,.btn-consultar,.btn-share,.mod-trigger,.label,button{ text-shadow:0 2px 4px rgba(0,0,0,.78),0 0 10px rgba(0,0,0,.42)!important;}\n'+
         '    .banner{height:170px;background:url("'+esc(bannerUrl)+'") center/cover #222;}\n'+
