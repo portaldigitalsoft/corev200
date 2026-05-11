@@ -615,7 +615,15 @@ function getCSSbyTema(tema,color,bannerUrl,urlFondo){
         '    *{box-sizing:border-box;}\n'+
         '    body{background:'+bodyBg+';'+bodyFondo+'margin:0;font-family:sans-serif;text-align:center;color:'+bodyTx+';min-height:100vh;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;}\n'+
         '    .card{background:'+cardBg+';max-width:480px;margin:auto;min-height:100vh;}\n'+
-        '    html,body,body *,body *::before,body *::after,.card,.card *,.dsk-nav,.dsk-nav *{text-shadow:0 2px 5px rgba(0,0,0,.96),0 0 16px rgba(0,0,0,.72)!important;}\n'+
+        '    html,body,body *,body *::before,body *::after,.card,.card *,.dsk-nav,.dsk-nav *{.card-text:last-child {
+    margin-bottom: 0;
+    text-shadow: none !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 12px;
+    border-radius: 8px;
+    color: #ffffff !important;}\n'+
         '    img,iframe,video,svg,canvas{ text-shadow:none!important;}\n'+
         '    .btn,.btn-extra,.btn-consultar,.btn-share,.mod-trigger,.label,button{ text-shadow:0 2px 4px rgba(0,0,0,.78),0 0 10px rgba(0,0,0,.42)!important;}\n'+
         '    .banner{height:170px;background:url("'+esc(bannerUrl)+'") center/cover #222;}\n'+
